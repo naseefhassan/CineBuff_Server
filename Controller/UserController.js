@@ -126,6 +126,70 @@ const object = {
       return res.status(500).json({ message: "Failed to get rationale Data" });
     }
   },
+  getRationale: async (req, res) => {
+    try {
+      const { rationaleID } = req.params;
+      console.log(rationaleID);
+      const rationaleData = await RationaleSchema.findById({
+        _id: rationaleID,
+      });
+      res
+        .status(200)
+        .json({ message: "rationale data fetched for editing", rationaleData });
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(500)
+        .json({ message: "Failed to get rationale Data for editing" });
+    }
+  },
+  editRationale: async (req, res) => {
+    try {
+      const {
+        module,
+        rationaleSummary,
+        rationaleText,
+        enable,
+        rationaleID,
+        groupID,
+        sequence,
+      } = req.body;
+  
+      const editedRationale = await RationaleSchema.findByIdAndUpdate(
+        rationaleID, 
+        {
+          Module: module,
+          RationaleSummary: rationaleSummary,
+          RationaleText: rationaleText, 
+          Enable: enable,
+          GroupID: groupID,
+          Sequence: sequence,
+        },
+        { new: true } 
+      );
+  
+      if (!editedRationale) {
+        return res.status(404).json({ message: "Rationale not found" });
+      }
+  
+      res.status(200).json({ message: "Rationale edited successfully", editedRationale });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Failed to edit rationale data" });
+    }
+  },
+  deleteRationale:async(req,res)=>{
+    try {
+      const {delId} = req.params
+      const response = await RationaleSchema.findByIdAndDelete(delId)
+      res.status(200).json({message:'rationale deleted successfully'})
+      
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({message:'failed to delete rationale'})
+    }
+  },
+  
 
   // XLSX to mongoDb  function
   xlsxToDb: async (req, res) => {
@@ -150,9 +214,7 @@ const object = {
 
         // Check if the collection already exists, otherwise create it
         if (mongoose.connection.models[collectionName]) {
-          console.log(
-            `'${collectionName}' already exists.`
-          );
+          console.log(`'${collectionName}' already exists.`);
         } else {
           // Create a dynamic schema for each collection
           const schema = new mongoose.Schema({}, { strict: false });
