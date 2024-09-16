@@ -11,8 +11,10 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const UserRouter= require('./Routes/UserRouter')
+const AdminRouter= require('./Routes/AdminRouter')
 
 app.use('/',UserRouter)
+app.use('/admin',AdminRouter)
 
 mongoDb().then(() => {
   try {
