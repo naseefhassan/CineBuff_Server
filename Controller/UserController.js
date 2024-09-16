@@ -1,5 +1,7 @@
 const Userschema = require("../Model/userSchema");
 const RationaleSchema = require("../Model/RationaleSchema");
+const SpecialtyCodeSchema = require("../Model/SpecialityCode");
+const MedicalBillSchema = require("../Model/MedicalBillSchema");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const xlsx = require("xlsx");
@@ -154,42 +156,100 @@ const object = {
         groupID,
         sequence,
       } = req.body;
-  
+
       const editedRationale = await RationaleSchema.findByIdAndUpdate(
-        rationaleID, 
+        rationaleID,
         {
           Module: module,
           RationaleSummary: rationaleSummary,
-          RationaleText: rationaleText, 
+          RationaleText: rationaleText,
           Enable: enable,
           GroupID: groupID,
           Sequence: sequence,
         },
-        { new: true } 
+        { new: true }
       );
-  
+
       if (!editedRationale) {
         return res.status(404).json({ message: "Rationale not found" });
       }
-  
-      res.status(200).json({ message: "Rationale edited successfully", editedRationale });
+
+      res
+        .status(200)
+        .json({ message: "Rationale edited successfully", editedRationale });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Failed to edit rationale data" });
     }
   },
-  deleteRationale:async(req,res)=>{
+  deleteRationale: async (req, res) => {
     try {
-      const {delId} = req.params
-      const response = await RationaleSchema.findByIdAndDelete(delId)
-      res.status(200).json({message:'rationale deleted successfully'})
-      
+      const { delId } = req.params;
+      const response = await RationaleSchema.findByIdAndDelete(delId);
+      res.status(200).json({ message: "rationale deleted successfully" });
     } catch (error) {
       console.error(error);
-      res.status(400).json({message:'failed to delete rationale'})
+      res.status(400).json({ message: "failed to delete rationale" });
     }
   },
-  
+  getSpecialityCodes: async (req, res) => {
+    try {
+      const SpecialityCode = await SpecialtyCodeSchema.find();
+      res.status(200).json({
+        message: "speciality code fetched successfully",
+        SpecialityCode,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({ message: "failed to fetch speciality code" });
+    }
+  },
+  addBill: async (req, res) => {
+    try {
+      const {
+        PatientName,
+        DoctorName,
+        PhoneNumber,
+        ProcedureCode,
+        ProcedureDescription,
+        Amount,
+        DateOfService,
+        SpecialityCode,
+      } = req.body;
+      const saveBill = await MedicalBillSchema({
+        PatientName: PatientName,
+        DoctorName: DoctorName,
+        PhoneNumber: PhoneNumber,
+        ProcedureCode: ProcedureCode,
+        ProcedureDescription: ProcedureDescription,
+        Amount: Amount,
+        DateOfService: DateOfService,
+        SpecialityCode: SpecialityCode,
+      });
+      saveBill.save();
+      res.status(200).json({ message: "New Bill Added Successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({ message: "Failed to add New Bill" });
+    }
+  },
+  showBill: async (req, res) => {
+    try {
+      const showBill = await MedicalBillSchema.find();
+      res.status(200).json({ message: "Bills fetched successfully", showBill });
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({ message: "Bills fetching failed" });
+    }
+  },
+  // showBill:async(req,res)=>{
+  //   try {
+
+  //   } catch (error) {
+  //    console.error(error);
+
+  //   }
+  // },
 
   // XLSX to mongoDb  function
   xlsxToDb: async (req, res) => {
