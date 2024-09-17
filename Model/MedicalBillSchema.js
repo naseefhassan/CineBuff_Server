@@ -10,6 +10,8 @@ const medicalBillSchema = new mongoose.Schema({
   DateOfService: { type: String, required: true },
   SpecialityCode: { type: String, required: true },
   BillStatus: { default: "Pending", type: String, required: true },
+  RejectReason: {default:"", type: String, required: false},
+
 });
 
 const MedicalBill = new mongoose.model("medicalbills", medicalBillSchema);
