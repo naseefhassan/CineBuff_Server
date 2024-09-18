@@ -8,7 +8,7 @@ const UserSchema = require("../Model/userSchema");
 const object = {
   login: async (req, res) => {
     const predefinedEmail = "admin@gmail.com";
-    const predefinedPassword = "password123";
+    const predefinedPassword = "Naseef@2002";
     const { email, password } = req.body;
 
     if (email === predefinedEmail && password === predefinedPassword) {
