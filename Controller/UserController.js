@@ -131,7 +131,6 @@ const object = {
   getRationale: async (req, res) => {
     try {
       const { rationaleID } = req.params;
-      console.log(rationaleID);
       const rationaleData = await RationaleSchema.findById({
         _id: rationaleID,
       });

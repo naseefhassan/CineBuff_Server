@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
 const MedicalBillSchema = require("../Model/MedicalBillSchema");
 const DecisionListsSchema = require("../Model/DecisionTextSchema");
+const Userschema = require("../Model/userSchema");
+const UserSchema = require("../Model/userSchema");
+
 
 const object = {
   login: async (req, res) => {
@@ -67,7 +70,6 @@ const object = {
 
       const rejectReason = await DecisionListsSchema.find({ _id: decisionId });
       const reason = rejectReason[0].DecisionText
-      console.log(reason);
       await MedicalBillSchema.findByIdAndUpdate(
         { _id: billId },
         { BillStatus: "Rejected", RejectReason: reason },
@@ -80,14 +82,15 @@ const object = {
       res.status(400).json({ message: "failed to reject the bill" });
     }
   },
-  // showBill:async(req,res)=>{
-  //   try {
-
-  //   } catch (error) {
-  //    console.error(error);
-
-  //   }
-  // },
+  getAllUser:async(req,res)=>{
+    try {
+      const User = await UserSchema.find()
+      res.status(200).json({message:'user details fetched successfully',User})
+    } catch (error) {
+     console.error(error);
+     res.status(400).json({ message: "failed to fetch the user details" });
+    }
+  },
 };
 
 module.exports = object;
